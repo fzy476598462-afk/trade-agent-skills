@@ -1,0 +1,8 @@
+{
+  "rate_unit": "cbm",
+  "currency": "USD",
+  "rate": "80.00",
+  "rate_source": "Fictional demo LCL rate — destination and handling fees excluded",
+  "minimum_billable_units": 1,
+  "cartons": [{"count": 2, "dimensions_cm": [40, 30, 20], "gross_weight_kg": "6.1", "dimensions_source": "supplier"}]
+}

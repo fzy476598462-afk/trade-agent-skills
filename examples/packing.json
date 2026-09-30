@@ -1,0 +1,12 @@
+{
+  "invoice_no": "DEMO-001-PL",
+  "date": "2026-01-15",
+  "currency": "USD",
+  "seller": {"name": "Example Export Co.", "address": "100 Sample Road, Example City"},
+  "buyer": {"name": "Demo Import Ltd.", "address": "200 Fictional Avenue, Demo City"},
+  "items": [
+    {"description": "Rubber gasket", "part_no": "DEMO-A001", "quantity": 12, "cartons": 1, "net_kg": "5.2", "gross_kg": "6.0", "cbm": "0.024"},
+    {"description": "Mounting bracket (packing measurements pending)", "part_no": "DEMO-B002", "quantity": 8}
+  ],
+  "terms": "SYNTHETIC EXAMPLE — missing packing measurements remain blank."
+}

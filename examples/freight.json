@@ -1,0 +1,11 @@
+{
+  "rate_unit": "kg",
+  "currency": "USD",
+  "rate": "4.50",
+  "rate_source": "Fictional demo rate — replace with your carrier's quote",
+  "divisor_cm3_per_kg": 5000,
+  "rounding_step_kg": "0.5",
+  "surcharge_percent": 10,
+  "flat_surcharge": "5.00",
+  "cartons": [{"count": 2, "dimensions_cm": [40, 30, 20], "gross_weight_kg": "6.1", "dimensions_source": "measured"}]
+}

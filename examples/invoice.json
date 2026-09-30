@@ -1,0 +1,12 @@
+{
+  "invoice_no": "DEMO-001",
+  "date": "2026-01-15",
+  "currency": "USD",
+  "seller": {"name": "Example Export Co.", "address": "100 Sample Road, Example City", "contact": "sales@example.com"},
+  "buyer": {"name": "Demo Import Ltd.", "address": "200 Fictional Avenue, Demo City", "contact": "buyer@example.org"},
+  "items": [
+    {"description": "Rubber gasket / Junta de goma", "part_no": "DEMO-A001", "model": "Sample assembly", "quantity": 12, "unit": "pcs", "unit_price": "4.25", "material": "Rubber", "use": "Sealing"},
+    {"description": "Mounting bracket", "part_no": "DEMO-B002", "quantity": 8, "unit": "pcs", "unit_price": "11.375", "material": "Steel", "use": "Mounting"}
+  ],
+  "terms": "SYNTHETIC EXAMPLE — all names, products and prices are fictional. No payment instructions."
+}
