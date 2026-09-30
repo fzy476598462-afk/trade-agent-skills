@@ -1,0 +1,28 @@
+{
+  "vehicle": {
+    "model": "Fictional Demo SUV",
+    "platform": "fictional-platform",
+    "body_type": "suv",
+    "dimensions_mm": [4700, 1900, 1750],
+    "dimensions_source": "Synthetic demonstration data, not a real vehicle specification"
+  },
+  "parts": [{"part_type": "bumper_cover", "oe": "DEMO-BUMPER-01", "quantity": 2}],
+  "packing_records": [{
+    "id": "fictional-bumper-carton",
+    "part_type": "bumper_cover",
+    "oe": "DEMO-BUMPER-01",
+    "vehicle_model": "Fictional Demo SUV",
+    "body_type": "suv",
+    "size_class": "medium",
+    "units_per_carton": 1,
+    "dimensions_cm": [190, 55, 65],
+    "gross_weight_kg": 10,
+    "source": "Synthetic demonstration packing record; replace with actual measured records"
+  }],
+  "freight_terms": {
+    "rate_unit": "kg", "currency": "USD", "rate": "4.5",
+    "rate_source": "Fictional demonstration rate",
+    "divisor_cm3_per_kg": 5000,
+    "max_length_cm": 180
+  }
+}

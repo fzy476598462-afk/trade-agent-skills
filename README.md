@@ -15,7 +15,7 @@
 | Skill | What you get | Important boundary |
 | --- | --- | --- |
 | [invoice-builder](skills/invoice-builder) | Commercial / proforma / customs invoices and packing lists as XLSX | Your confirmed data; no pricing or HS-code inference |
-| [freight-estimator](skills/freight-estimator) | Actual vs. volumetric weight, per-carton rounding, kg / CBM estimates | Supply your own rates and carrier terms |
+| [freight-estimator](skills/freight-estimator) | Vehicle/part packing references, actual vs. volumetric weight, kg / CBM estimates | Supply packing evidence, rates and carrier terms |
 | [translate-rfq](skills/translate-rfq) | Shared and inline text translated in a copy of the workbook | You or your agent supply translations; untouched ZIP members remain identical |
 
 These are standalone public adaptations of tools used in my own trade workflow. They contain **no customer records, credentials, company defaults or carrier rate database**. All included examples are fictional. Scripts run locally, without an AI API key or a network call; the agent provides judgment and translation.
@@ -65,6 +65,15 @@ python skills/freight-estimator/scripts/estimate_freight.py examples/freight-sea
 ```
 
 Two 40 × 30 × 20 cm cartons at 6.1 kg each, with a divisor of 5000 and a per-carton 0.5 kg rounding step, bill at **13 kg**. At a fictional USD 4.50/kg plus 10% and USD 5 flat, the estimate is **USD 69.35**. Real rate cards differ; supply the carrier's divisor, minima and surcharges explicitly. A missing rate fails instead of returning a zero quote.
+
+#### When packing is not confirmed yet
+
+```bash
+python skills/freight-estimator/scripts/prepare_shipment.py examples/vehicle-shipment.json --output out/prepared-shipment.json
+python skills/freight-estimator/scripts/estimate_freight.py out/prepared-shipment.json
+```
+
+Vehicle **body type** and **size class** are separate. Supplied overall dimensions group reference records into explicit operational bins; they never become carton dimensions. The tool prioritizes actual packing and exact-OE records, then ranks same-model/platform and similar body/size records for large parts. Similar references require explicit selection, remain estimates, and preserve the stated source. A larger SUV does not automatically increase a small sensor's size. If packing is missing or ambiguous, no shipment file is written. No model specification or packing record is invented.
 
 ### RFQ → translated copy
 

@@ -9,7 +9,7 @@
 | 工具 | 能做什么 | 需要你提供什么 |
 | --- | --- | --- |
 | [invoice-builder](skills/invoice-builder) | 商业发票、形式发票、货代用货值发票、装箱单 | 已确认的抬头、商品、数量、价格和条款 |
-| [freight-estimator](skills/freight-estimator) | 比较实重和体积重，按箱进位，计算公斤或立方米计费 | 包装尺寸、毛重、货代费率和计费规则 |
+| [freight-estimator](skills/freight-estimator) | 按车型和零件筛选包装参考，再计算实重、体积重及费用 | 包装数据或有来源的包装记录、货代费率及规则 |
 | [translate-rfq](skills/translate-rfq) | 修改 Excel 里的文字，保留原表图片、公式、样式和其他文件部分 | 原询价单及确认后的译文 |
 
 ## 安装
@@ -64,6 +64,21 @@ python skills/translate-rfq/scripts/translate_xlsx.py apply out/demo-rfq.xlsx ou
 ![虚构数据生成的商业发票](docs/invoice-preview.png)
 
 ## 使用边界
+
+### 运费估算先看车型与零件
+
+SUV、轿车、MPV、皮卡等是车身类型；紧凑、中等、大型等是另一项尺寸分组。工具可根据你提供的车长、车宽分组，车高保留作背景信息。分组阈值是明示的内部参考规则，不是官方车型级别，也不是包裹尺寸。
+
+包装数据优先于车型推测。同 OE 的唯一记录可直接作为估算参考；同车型、同平台或同车身类型及尺寸的大件记录，需要明确选择。相似尺寸只用于保险杠、机盖、车门、翼子板、风挡、长饰条等，传感器之类小件不会因为车更大就自动放大。
+
+```bash
+python skills/freight-estimator/scripts/prepare_shipment.py examples/vehicle-shipment.json --output out/prepared-shipment.json
+python skills/freight-estimator/scripts/estimate_freight.py out/prepared-shipment.json
+```
+
+重复使用包装记录会标为“本次估算”，不会变成“本次实测”。缺少记录或无法确定用哪条时，工具不输出可计费输入，不忽略缺失商品。不猜车型参数，不自动合箱、折叠或套叠。演示车型和包装记录都是虚构数据。
+
+### 文件与计算
 
 - 发票按显示的两位小数单价计算，逐行四舍五入后相加。高精度单价合同需要另选工作流。拒绝内部成本等未支持字段；不会猜报关编码或申报值。
 - 运费必须提供费率、来源和货代计费规则。缺少费率会报错。尺寸超限只提示，不代表承运许可或已经计算超长费。

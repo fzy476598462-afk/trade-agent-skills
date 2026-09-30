@@ -1,11 +1,28 @@
 ---
 name: freight-estimator
-description: Calculate chargeable weight, volume and freight estimates from carton measurements and user-supplied carrier rates. Use for freight arithmetic and comparison, not live rate lookup, packing optimization, carrier booking or customs advice.
+description: Estimate auto-parts freight from confirmed cartons or explicit packing references, using vehicle body type, size and part category to rank references. Calculate kg or CBM billing with supplied carrier terms. Use for freight arithmetic and packing-data preparation, not live rates or carrier booking.
 ---
 
 # Freight estimates
 
-Use the standard-library script `scripts/estimate_freight.py`. Supply packed-carton measurements, never guessed dimensions inferred from a product name or part number.
+Use the standard-library script `scripts/estimate_freight.py` for confirmed carton measurements. Use `scripts/prepare_shipment.py` when you have vehicle/part context and explicit packing references; do not invent reference dimensions from a product name.
+
+## Before arithmetic: vehicle and packing evidence
+
+Separate `body_type` (sedan, hatchback, suv, mpv, pickup, van, truck, bus, other, unknown) from `size_class` (compact, medium, large, oversize, unknown). Confirm exact model/year/variant and dimensional evidence when relevant; the script does not retrieve vehicle specifications or infer compatibility.
+
+The preparation script can group supplied overall vehicle dimensions `[length,width,height]` in **mm**: compact up to 4500×1850, medium up to 4900×1950, large up to 5500×2100, otherwise oversize (length and width both must fit). Height remains context. These are explicit operational reference bins, not official market segments, legal limits or carton measurements. Without dimensions, a supplied size class is an assumption; do not present it as independently verified.
+
+Evidence order: supplied packed cartons > unique exact-OE packing record > explicitly selected same-model/platform record > explicitly selected similar body/size record for size-sensitive parts. Similar body/size applies only to bumper covers/beams, hoods, doors, fenders, windshields and long trim. Small sensors and other small parts do not automatically become larger because the vehicle is an SUV.
+
+Records must specify source, part type, units per carton, carton sides in **cm** and gross kg. A unique exact-OE reference can be selected automatically; model/platform/similarity matches and ambiguous records require `reference_id`. Every reused record remains an **estimate** for the new shipment. Partial cartons retain full reference dimensions/weight as a conservative assumption. Consolidation, folding, stacking and nesting are not inferred.
+
+```bash
+python scripts/prepare_shipment.py vehicle-input.json --output shipment.json
+python scripts/estimate_freight.py shipment.json
+```
+
+See `examples/vehicle-shipment.json` in the repository; it is entirely fictional. Preparation reports candidates, selected sources and unresolved lines. If any line lacks packing evidence, it exits with code 2 and writes no shipment file. Do not silently omit unresolved goods or turn missing evidence into zero freight.
 
 ```bash
 python scripts/estimate_freight.py shipment.json

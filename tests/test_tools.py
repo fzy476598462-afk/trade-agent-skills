@@ -23,6 +23,7 @@ def load(relative):
 
 invoice = load("skills/invoice-builder/scripts/build_invoice.py")
 freight = load("skills/freight-estimator/scripts/estimate_freight.py")
+packing = load("skills/freight-estimator/scripts/prepare_shipment.py")
 translate = load("skills/translate-rfq/scripts/translate_xlsx.py")
 demo = load("examples/make_demo_rfq.py")
 
@@ -142,6 +143,84 @@ class FreightTests(unittest.TestCase):
         data["surchage_percent"] = 20
         with self.assertRaises(ValueError):
             freight.estimate(data)
+
+
+class PackingTests(unittest.TestCase):
+    def test_body_type_and_operational_size_are_separate(self):
+        vehicle = packing.vehicle_context(example("vehicle-shipment.json")["vehicle"])
+        self.assertEqual(vehicle["body_type"], "suv")
+        self.assertEqual(vehicle["size_class"], "medium")
+        larger = {
+            "body_type": "suv",
+            "dimensions_mm": [5300, 2050, 1950],
+            "dimensions_source": "fictional",
+        }
+        self.assertEqual(packing.vehicle_context(larger)["size_class"], "large")
+
+    def test_exact_oe_uses_record_but_remains_estimate(self):
+        result = packing.prepare(example("vehicle-shipment.json"))
+        self.assertEqual(result["status"], "ready_for_estimate")
+        self.assertEqual(result["lines"][0]["basis"], "same_oe")
+        self.assertEqual(result["shipment"]["cartons"][0]["dimensions_source"], "estimate")
+        self.assertTrue(
+            any(
+                "exceeds" in warning for warning in freight.estimate(result["shipment"])["warnings"]
+            )
+        )
+
+    def test_size_alone_cannot_create_packing(self):
+        data = example("vehicle-shipment.json")
+        data["packing_records"] = []
+        result = packing.prepare(data)
+        self.assertEqual(result["status"], "needs_data")
+        self.assertIsNone(result["shipment"])
+
+    def test_similar_large_part_requires_explicit_reference(self):
+        data = example("vehicle-shipment.json")
+        data["parts"][0]["oe"] = "DIFFERENT-OE"
+        data["packing_records"][0]["vehicle_model"] = "Other fictional SUV"
+        result = packing.prepare(data)
+        self.assertEqual(result["status"], "needs_data")
+        self.assertEqual(result["lines"][0]["candidates"][0]["basis"], "similar_body_and_size")
+        data["parts"][0]["reference_id"] = "fictional-bumper-carton"
+        self.assertEqual(packing.prepare(data)["status"], "ready_for_estimate")
+
+    def test_small_part_does_not_scale_by_suv_size(self):
+        data = example("vehicle-shipment.json")
+        data["parts"][0].update(oe="OTHER-OE", part_type="sensor")
+        data["packing_records"][0].update(
+            oe="DIFFERENT-OE", vehicle_model="Other SUV", part_type="sensor"
+        )
+        self.assertEqual(packing.prepare(data)["lines"][0]["candidates"], [])
+
+    def test_confirmed_packing_takes_precedence(self):
+        data = example("vehicle-shipment.json")
+        carton = {
+            "count": 1,
+            "dimensions_cm": [200, 60, 70],
+            "gross_weight_kg": 15,
+            "dimensions_source": "measured",
+        }
+        data["parts"][0]["packed_cartons"] = [carton]
+        result = packing.prepare(data)
+        self.assertEqual(result["shipment"]["cartons"], [carton])
+        self.assertEqual(result["lines"][0]["basis"], "supplied_packing")
+
+    def test_partial_carton_and_ambiguous_records(self):
+        data = example("vehicle-shipment.json")
+        data["parts"][0]["quantity"] = 3
+        data["packing_records"][0]["units_per_carton"] = 2
+        self.assertEqual(packing.prepare(data)["shipment"]["cartons"][0]["count"], 2)
+        duplicate = copy.deepcopy(data["packing_records"][0])
+        duplicate["id"] = "second-record"
+        data["packing_records"].append(duplicate)
+        self.assertEqual(packing.prepare(data)["status"], "needs_data")
+
+    def test_conflicting_vehicle_class_rejected(self):
+        vehicle = example("vehicle-shipment.json")["vehicle"]
+        vehicle["size_class"] = "compact"
+        with self.assertRaises(ValueError):
+            packing.vehicle_context(vehicle)
 
 
 class TranslationTests(unittest.TestCase):
