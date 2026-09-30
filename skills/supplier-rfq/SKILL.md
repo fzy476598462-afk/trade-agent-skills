@@ -5,6 +5,8 @@ description: Build an XLSX supplier request for quotation with reference images 
 
 # Supplier RFQ
 
+If the request identifies a WhatsApp customer or conversation, first use the sibling `whatsapp-rfq` skill to fetch scoped live messages and attachments. Do not ask the user to copy chats or manually reconstruct items. Use its reviewed `supplier-rfq.json`; unresolved and withdrawn lines remain outside the generated table. Both skills must be installed for this route.
+
 1. Confirm the model/year, part identity, required quantity and reference-image meaning. A picture is not proof of fitment. Preserve the source description separately.
 2. Prepare JSON with `rfq_no`, ISO `date`, optional `vehicle` / `instructions`, and `items` (1–200). Each item accepts `description`, `source_text`, `part_no`, positive `quantity`, optional `photo` and `notes`. Unknown fields fail.
 3. Run `python scripts/build_supplier_rfq.py INPUT.json --output NEW.xlsx`. Photo paths resolve relative to the JSON file. `openpyxl` and Pillow are required.

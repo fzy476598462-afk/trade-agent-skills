@@ -1,13 +1,14 @@
 # 外贸实用工具
 
-**把重复的表格工作交给工具。** 八个工具，覆盖发票、询报价、运费、费用比较和现有表格修改。
+**从 WhatsApp 询价到表格处理。** 九个工具，覆盖询价拉取、发票、询报价、运费、费用比较和现有表格修改。
 
 [English](README.en.md) · [Jordan 的个人站](https://partstradeai.com/)
 
-这是从我自己的外贸工作流里整理出的独立公开版。没有客户资料、真实价格、运价库、公司默认信息或密钥。所有样例都是虚构的；脚本在本地运行，不调用 AI 服务。翻译内容由你或你使用的 Agent 提供。
+这是从我自己的外贸工作流里整理出的独立公开版。没有客户资料、真实价格、运价库、公司默认信息或密钥。所有样例都是虚构的；脚本在本地运行。WhatsApp 入口由你连接的 Agent 通过 MCP 读取指定对话和附件；翻译、需求判断及图片核对由 Agent 完成。使用云端模型时，工具读到的内容会提供给你选用的模型。
 
 | 工具 | 能做什么 | 需要你提供什么 |
 | --- | --- | --- |
+| [WhatsApp 询价整理](skills/whatsapp-rfq) | 拉指定客户的询价及附件，核对更改和撤回，整理带图询价资料及待确认项 | 已连接的 WhatsApp MCP、客户线索和读取范围 |
 | [发票与装箱单](skills/invoice-builder) | 商业发票、形式发票、货代用货值发票、装箱单 | 已确认的抬头、商品、数量、价格和条款 |
 | [运费估算](skills/freight-estimator) | 按车型和零件筛选包装参考，再计算实重、体积重及费用 | 包装数据或有来源的包装记录、货代费率及规则 |
 | [询价单翻译](skills/translate-rfq) | 修改 Excel 里的文字，保留原表图片、公式、样式和其他文件部分 | 原询价单及确认后的译文 |
@@ -22,7 +23,7 @@
 需要 Python 3.10 及以上。表格生成与报价检查使用 `openpyxl`，图片使用 Pillow；文字翻译、局部修改和成本计算只使用 Python 自带功能。
 
 ```bash
-git clone https://github.com/fzy476598462-afk/trade-agent-skills.git
+git clone https://github.com/jordan-partstrade/trade-agent-skills.git
 cd trade-agent-skills
 python -m pip install -r requirements.txt
 ```
@@ -36,6 +37,27 @@ Codex 项目：把需要的完整 skill 文件夹放进 `.agents/skills/`。Clau
 > 用 freight-estimator，按这份货代费率和已包装尺寸估算运费。说明体积重、计费重及还未包含的费用。
 
 > 用 translate-rfq，把这份西语询价单翻成中文。保留型号、零件号、数量、图片和公式，检查未翻译的文字。
+
+## 从 WhatsApp 拉询价
+
+已有 WhatsApp MCP 时，同时安装 `whatsapp-rfq` 和 `supplier-rfq`；收到客户 Excel 还需 `translate-rfq`。没有连接时，按[接入说明](skills/whatsapp-rfq/references/whatsapp-mcp.md)连接自己的账号，不用上传登录信息。
+
+可以直接对 Agent 说：
+
+> 用 whatsapp-rfq，把这个客户本轮询价拉出来。自己读取双方聊天、下载并查看相关图片，核对最新数量和取消的件；明确的需求生成带图供应商询价单，缺项单独列出来。先交付文件。
+
+Agent 会调用 MCP 拉取真实材料，再生成本地资料包；无需你先复制聊天或手填商品信息。图片不能按位置猜对应，未知数量不会默填 1。明确行继续处理，待确认行和撤回行分别保留。
+
+下面只演示**虚构 MCP 收据和虚构图片**的整理及表格生成，不会连接账号：
+
+```bash
+python skills/whatsapp-rfq/scripts/prepare_rfq.py examples/whatsapp-rfq.json --output out/whatsapp-demo
+python skills/supplier-rfq/scripts/build_supplier_rfq.py out/whatsapp-demo/supplier-rfq.json --output out/whatsapp-demo/supplier-rfq.xlsx
+```
+
+样例将数量由 2 更正为 4 的前灯纳入询价，机油滤清器因缺数量留待确认，已取消的后视镜不纳入表格。原始聊天证据及待确认清单留在本地；共享前检查整理后的表格和图片，不要连同证据文件一起发送。
+
+接入流程已按 WhatsApp MCP 的实际工具定义核对；仓库验证使用虚构收据，不代表已用真实客户对话完成验证。它不自动回复客户或联系供应商。
 
 ## 直接试用
 
@@ -96,7 +118,7 @@ python skills/landed-cost/scripts/compare_costs.py examples/landed-cost.json
 
 门到门比较只在全部方案费用齐全时选最低价。明确不适用的费用填零；未知填空或不填，结果会要求补资料。确认相同商品、数量、品质、目的地和税费口径，打包费用只算一次。
 
-网站访客检查和通用 Agent 自验模板单独放在 [Agent 交接与验收工具库](https://github.com/fzy476598462-afk/agent-handoff-review-verify)。
+网站访客检查和通用 Agent 自验模板单独放在 [Agent 交接与验收工具库](https://github.com/jordan-partstrade/agent-handoff-review-verify)。
 
 ## 使用边界
 
@@ -131,6 +153,6 @@ ruff check .
 ruff format --check .
 ```
 
-欢迎用[问题反馈](https://github.com/fzy476598462-afk/trade-agent-skills/issues)提出需求。请用虚构或彻底匿名的输入，别上传客户资料、银行信息或密钥。
+欢迎用[问题反馈](https://github.com/jordan-partstrade/trade-agent-skills/issues)提出需求。请用虚构或彻底匿名的输入，别上传客户资料、银行信息或密钥。
 
 [MIT 开源许可](LICENSE)

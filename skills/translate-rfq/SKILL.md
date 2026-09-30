@@ -5,6 +5,8 @@ description: Translate text in an XLSX RFQ into a new workbook while preserving 
 
 # Preserve the RFQ workbook
 
+If the workbook is still in a WhatsApp conversation, use the sibling `whatsapp-rfq` skill and the connected MCP to identify the correct chat and download the actual document. Verify the attachment's source and content, then translate that XLSX; do not replace it with a reconstructed inquiry table. This route requires both skills and an existing WhatsApp MCP connection.
+
 Use the standard-library `scripts/translate_xlsx.py`. It edits only shared-string and inline-string XML text nodes, including rich-text runs. Every other archive member is verified byte-for-byte after writing. Do not round-trip the source through a spreadsheet library merely to translate it.
 
 ```bash

@@ -1,0 +1,62 @@
+{
+  "rfq_no": "DEMO-WA-RFQ-001",
+  "date": "2026-01-15",
+  "vehicle": "Demo SUV | model/year to be confirmed",
+  "instructions": "Fictional sample. Confirm part fitment and quality before offering prices.",
+  "scope": {
+    "chat_jid": "demo-buyer@lid",
+    "after": "2026-01-15T00:00:00",
+    "before": "2026-01-16T00:00:00",
+    "limit": 4
+  },
+  "pages": [
+    {
+      "tool": "list_messages",
+      "arguments": {"chat_jid": "demo-buyer@lid", "after": "2026-01-15T00:00:00", "before": "2026-01-16T00:00:00", "limit": 4, "page": 0, "include_context": false},
+      "result": "[2026-01-15 09:06:00] Chat: Demo buyer From: Demo buyer: También un filtro de aceite; cantidad pendiente.\n[2026-01-15 09:05:00] Chat: Demo buyer From: Demo buyer: Cancelamos los espejos.\n[2026-01-15 09:03:00] Chat: Demo buyer From: Demo buyer: Corrección: 4 faros, no 2.\n[2026-01-15 09:02:00] Chat: Demo buyer From: Demo buyer: Necesito 2 faros delanteros para el Demo SUV.\n"
+    },
+    {
+      "tool": "list_messages",
+      "arguments": {"chat_jid": "demo-buyer@lid", "after": "2026-01-15T00:00:00", "before": "2026-01-16T00:00:00", "limit": 4, "page": 1, "include_context": false},
+      "result": {"content": [{"type": "text", "text": "[2026-01-15 09:00:00] Chat: Demo buyer From: Demo buyer: [image - Message ID: DEMO-IMG-01 - Chat JID: demo-buyer@lid] Faro delantero, referencia visual.\n"}]}
+    },
+    {
+      "tool": "list_messages",
+      "arguments": {"chat_jid": "demo-buyer@lid", "after": "2026-01-15T00:00:00", "before": "2026-01-16T00:00:00", "limit": 4, "page": 2, "include_context": false},
+      "result": "No messages to display."
+    }
+  ],
+  "downloads": [
+    {
+      "tool": "download_media",
+      "arguments": {"message_id": "DEMO-IMG-01", "chat_jid": "demo-buyer@lid"},
+      "result": {"success": true, "file_path": "demo-part.png"}
+    }
+  ],
+  "items": [
+    {
+      "description": "前灯 / Front lamp",
+      "part_no": "",
+      "quantity": 4,
+      "quantity_evidence": {"page": 0, "quote": "Corrección: 4 faros, no 2."},
+      "photo_message_id": "DEMO-IMG-01",
+      "photo_verified": true,
+      "notes": "Fictional reference drawing; model/year and fitment must be confirmed.",
+      "state": "ready",
+      "evidence": [{"page": 0, "quote": "Necesito 2 faros delanteros para el Demo SUV."}, {"page": 0, "quote": "Corrección: 4 faros, no 2."}]
+    },
+    {
+      "description": "机油滤清器 / Oil filter",
+      "quantity": null,
+      "state": "pending",
+      "missing": ["数量", "配件型号"],
+      "evidence": [{"page": 0, "quote": "También un filtro de aceite; cantidad pendiente."}]
+    },
+    {
+      "description": "后视镜 / Mirror",
+      "state": "withdrawn",
+      "reason": "客户已取消",
+      "evidence": [{"page": 0, "quote": "Cancelamos los espejos."}]
+    }
+  ]
+}

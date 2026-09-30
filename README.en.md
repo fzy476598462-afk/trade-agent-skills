@@ -1,19 +1,20 @@
 <p align="center"><img src="docs/cover.svg" alt="Trade Agent Skills — less spreadsheet busywork" width="900"></p>
 
 <p align="center">
-  <a href="https://github.com/fzy476598462-afk/trade-agent-skills/actions/workflows/check.yml"><img src="https://github.com/fzy476598462-afk/trade-agent-skills/actions/workflows/check.yml/badge.svg" alt="Checks"></a>
+  <a href="https://github.com/jordan-partstrade/trade-agent-skills/actions/workflows/check.yml"><img src="https://github.com/jordan-partstrade/trade-agent-skills/actions/workflows/check.yml/badge.svg" alt="Checks"></a>
   <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB" alt="Python 3.10+">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-0F766E" alt="MIT license"></a>
 </p>
 
-<p align="center"><strong>Invoices. Quotes. Freight. RFQs with the pictures still there.</strong><br>Eight practical skills and local scripts for everyday international trade work.</p>
+<p align="center"><strong>WhatsApp RFQs. Invoices. Quotes. Freight. Pictures on the right rows.</strong><br>Nine practical skills and local scripts for everyday international trade work.</p>
 
 <p align="center"><a href="README.md">简体中文</a> · English · <a href="https://partstradeai.com/">Made by Jordan</a></p>
 
-## Eight tools for the trade desk
+## Nine tools for the trade desk
 
 | Skill | What you get | Important boundary |
 | --- | --- | --- |
+| [whatsapp-rfq](skills/whatsapp-rfq) | Read scoped conversations and attachments through your existing WhatsApp MCP; package current demand, missing fields and withdrawn lines | Agent reviews meaning and images; no automatic sending |
 | [invoice-builder](skills/invoice-builder) | Commercial / proforma / customs invoices and packing lists as XLSX | Your confirmed data; no pricing or HS-code inference |
 | [freight-estimator](skills/freight-estimator) | Vehicle/part packing references, actual vs. volumetric weight, kg / CBM estimates | Supply packing evidence, rates and carrier terms |
 | [translate-rfq](skills/translate-rfq) | Shared and inline text translated in a copy of the workbook | You or your agent supply translations; untouched ZIP members remain identical |
@@ -25,12 +26,25 @@
 
 These are standalone public adaptations of tools used in my own trade workflow. They contain **no customer records, credentials, company defaults or carrier rate database**. All included examples are fictional. Scripts run locally, without an AI API key or a network call; the agent provides judgment and translation.
 
+## WhatsApp intake
+
+Install `whatsapp-rfq` together with `supplier-rfq`, and `translate-rfq` for customer workbooks. Use your existing WhatsApp MCP connection; [connection and receipt details](skills/whatsapp-rfq/references/whatsapp-mcp.md) are documented in Chinese. The agent fetches the specified conversation and attachments, checks corrections and cancellations, and prepares the packet without asking you to manually reconstruct the RFQ. A cloud agent receives the tool content through your chosen model provider.
+
+The offline example uses fictional MCP receipts and a fictional picture. It does not connect to WhatsApp:
+
+```bash
+python skills/whatsapp-rfq/scripts/prepare_rfq.py examples/whatsapp-rfq.json --output out/whatsapp-demo
+python skills/supplier-rfq/scripts/build_supplier_rfq.py out/whatsapp-demo/supplier-rfq.json --output out/whatsapp-demo/supplier-rfq.xlsx
+```
+
+The lamp quantity is corrected from 2 to 4; the oil filter is pending because its quantity is unknown; canceled mirrors are excluded. Keep `private-evidence.json`, `pending.json` and raw attachments local. Review the shareable workbook, and do not share the conversation evidence. Integration instructions were checked against the actual MCP tool definitions; tests use fictional receipts rather than live customer conversations. Nothing is automatically sent.
+
 ## Get started
 
 Requires Python 3.10+. Workbook generation and quote checks use `openpyxl`; reference images use Pillow. Translation, bounded cell edits and cost math use the Python standard library.
 
 ```bash
-git clone https://github.com/fzy476598462-afk/trade-agent-skills.git
+git clone https://github.com/jordan-partstrade/trade-agent-skills.git
 cd trade-agent-skills
 python -m pip install -r requirements.txt
 ```
@@ -127,7 +141,7 @@ python skills/landed-cost/scripts/compare_costs.py examples/landed-cost.json
 
 The example compares **USD 145.00 vs. 154.00**, including a supplied fictional exchange rate. Every fee category must be explicit. Known excluded charges can be zero; missing/null fees or missing FX block the lowest-cost selection. Compare the same goods, quantity, quality and destination, and count bundled charges once.
 
-For website visitor checks and a general agent verification controller, see the separate [agent-handoff-review-verify tools](https://github.com/fzy476598462-afk/agent-handoff-review-verify).
+For website visitor checks and a general agent verification controller, see the separate [agent-handoff-review-verify tools](https://github.com/jordan-partstrade/agent-handoff-review-verify).
 
 ## Know the limits
 
@@ -146,6 +160,6 @@ ruff check .
 ruff format --check .
 ```
 
-CI runs the regression suite on Windows and Linux. Got a useful trade workflow? [Open an issue](https://github.com/fzy476598462-afk/trade-agent-skills/issues) with a fictional input and expected result. Please remove customer names, addresses, prices, bank details and credentials from examples.
+CI runs the regression suite on Windows and Linux. Got a useful trade workflow? [Open an issue](https://github.com/jordan-partstrade/trade-agent-skills/issues) with a fictional input and expected result. Please remove customer names, addresses, prices, bank details and credentials from examples.
 
 [MIT](LICENSE) · [Jordan](https://partstradeai.com/)
