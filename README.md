@@ -1,33 +1,25 @@
-<p align="center"><img src="docs/cover.svg" alt="Trade Agent Skills — less spreadsheet busywork" width="900"></p>
+# 外贸实用工具
 
-<p align="center">
-  <a href="https://github.com/fzy476598462-afk/trade-agent-skills/actions/workflows/check.yml"><img src="https://github.com/fzy476598462-afk/trade-agent-skills/actions/workflows/check.yml/badge.svg" alt="Checks"></a>
-  <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB" alt="Python 3.10+">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-0F766E" alt="MIT license"></a>
-</p>
+**把重复的表格工作交给工具。** 八个工具，覆盖发票、询报价、运费、费用比较和现有表格修改。
 
-<p align="center"><strong>Invoices. Quotes. Freight. RFQs with the pictures still there.</strong><br>Eight practical skills and local scripts for everyday international trade work.</p>
+[English](README.en.md) · [Jordan 的个人站](https://partstradeai.com/)
 
-<p align="center">English · <a href="README.zh-CN.md">简体中文</a> · <a href="https://partstradeai.com/">Made by Jordan</a></p>
+这是从我自己的外贸工作流里整理出的独立公开版。没有客户资料、真实价格、运价库、公司默认信息或密钥。所有样例都是虚构的；脚本在本地运行，不调用 AI 服务。翻译内容由你或你使用的 Agent 提供。
 
-## Eight tools for the trade desk
-
-| Skill | What you get | Important boundary |
+| 工具 | 能做什么 | 需要你提供什么 |
 | --- | --- | --- |
-| [invoice-builder](skills/invoice-builder) | Commercial / proforma / customs invoices and packing lists as XLSX | Your confirmed data; no pricing or HS-code inference |
-| [freight-estimator](skills/freight-estimator) | Vehicle/part packing references, actual vs. volumetric weight, kg / CBM estimates | Supply packing evidence, rates and carrier terms |
-| [translate-rfq](skills/translate-rfq) | Shared and inline text translated in a copy of the workbook | You or your agent supply translations; untouched ZIP members remain identical |
-| [supplier-rfq](skills/supplier-rfq) | Supplier RFQs with images beside each item and blank response columns | Confirm part identity and review the actual pictures |
-| [multi-quote](skills/multi-quote) | Multi-model tabs, separate quality options and a linked summary | Explicit quantities select options; no internal pricing defaults |
-| [quote-audit](skills/quote-audit) | Read-only arithmetic, totals, hidden-content and internal-label checks | Explicit layout mapping; saved formula caches required |
-| [xlsx-edit](skills/xlsx-edit) | Hash-bound existing-cell corrections in a copy | Formula expressions retained; caches cleared for recalculation |
-| [landed-cost](skills/landed-cost) | Comparable door-to-door totals in a common currency | Unknown fees block a winner; supply costs and FX |
+| [发票与装箱单](skills/invoice-builder) | 商业发票、形式发票、货代用货值发票、装箱单 | 已确认的抬头、商品、数量、价格和条款 |
+| [运费估算](skills/freight-estimator) | 按车型和零件筛选包装参考，再计算实重、体积重及费用 | 包装数据或有来源的包装记录、货代费率及规则 |
+| [询价单翻译](skills/translate-rfq) | 修改 Excel 里的文字，保留原表图片、公式、样式和其他文件部分 | 原询价单及确认后的译文 |
+| [带图供应商询价单](skills/supplier-rfq) | 带图供应商询价单，图片与商品放在同一行 | 已确认的需求和经过检查的参考图片 |
+| [多车型报价单](skills/multi-quote) | 多车型、多品质报价单及汇总页 | 对外售价、明确选择的数量和运费 |
+| [报价检查](skills/quote-audit) | 检查逐行金额、汇总、隐藏内容和内部字段提示 | 实际表格及明确的检查范围 |
+| [Excel 局部修改](skills/xlsx-edit) | 在副本中修改已有文字或数量，核对其他文件部分保持一致 | 源文件、原值和目标值 |
+| [门到门成本比较](skills/landed-cost) | 比较同一交货范围的门到门成本 | 完整费用及有来源的换算率 |
 
-These are standalone public adaptations of tools used in my own trade workflow. They contain **no customer records, credentials, company defaults or carrier rate database**. All included examples are fictional. Scripts run locally, without an AI API key or a network call; the agent provides judgment and translation.
+## 安装
 
-## Get started
-
-Requires Python 3.10+. Workbook generation and quote checks use `openpyxl`; reference images use Pillow. Translation, bounded cell edits and cost math use the Python standard library.
+需要 Python 3.10 及以上。表格生成与报价检查使用 `openpyxl`，图片使用 Pillow；文字翻译、局部修改和成本计算只使用 Python 自带功能。
 
 ```bash
 git clone https://github.com/fzy476598462-afk/trade-agent-skills.git
@@ -35,109 +27,102 @@ cd trade-agent-skills
 python -m pip install -r requirements.txt
 ```
 
-For **Codex**, copy the skill folders into your project's `.agents/skills/` directory. For **Claude Code**, use `.claude/skills/`. Copy the complete folder, including `scripts/` and any `assets/`. Example commands below run from the repository root; installed skills can be invoked using their actual script paths. Other agents can read `SKILL.md` directly, but their installation conventions may differ.
+Codex 项目：把需要的完整 skill 文件夹放进 `.agents/skills/`。Claude Code 项目：放进 `.claude/skills/`。保留文件夹里的 `SKILL.md`、`scripts/` 和 `assets/`。其他 Agent 可直接读取说明，但安装目录可能不同。
 
-Example requests:
+可以这样请求：
 
-> Use invoice-builder to make a commercial invoice from these confirmed line items. Keep internal costs out, and show the final arithmetic.
+> 用 invoice-builder，按这些已经确认的品名、数量和售价出商业发票。不要加入采购成本，核对最终金额。
 
-> Use freight-estimator for these packed cartons and this carrier quote. Compare actual and volumetric weight, and list missing fees.
+> 用 freight-estimator，按这份货代费率和已包装尺寸估算运费。说明体积重、计费重及还未包含的费用。
 
-> Use translate-rfq to translate this Spanish RFQ into Chinese. Preserve part numbers, quantities, images and formulas. Review any untranslated text.
+> 用 translate-rfq，把这份西语询价单翻成中文。保留型号、零件号、数量、图片和公式，检查未翻译的文字。
 
-### Invoice → XLSX
+## 直接试用
+
+下面的命令在仓库根目录运行。生成文件放在 `out/`，工具拒绝覆盖已有文件。
 
 ```bash
+# 商业发票：演示货值 142.04 美元
 python skills/invoice-builder/scripts/build_invoice.py examples/invoice.json --output out/commercial.xlsx
+
+# 货代用货值发票：仅货值小计，不含运费和合计
 python skills/invoice-builder/scripts/build_invoice.py examples/invoice.json --kind customs --output out/customs.xlsx
+
+# 装箱单：不含价格，未提供的重量和尺寸留空
 python skills/invoice-builder/scripts/build_invoice.py examples/packing.json --kind packing --output out/packing.xlsx
+
+# 公斤计费演示：结果 69.35 美元，费率为虚构值
+python skills/freight-estimator/scripts/estimate_freight.py examples/freight.json
+
+# 海运演示：按立方米计算，示例最低计费 1 立方米
+python skills/freight-estimator/scripts/estimate_freight.py examples/freight-sea.json
+
+# 生成带图片、公式、多工作表和两种文字存储方式的演示询价单
+python examples/make_demo_rfq.py out/demo-rfq.xlsx
+python skills/translate-rfq/scripts/translate_xlsx.py extract out/demo-rfq.xlsx out/translations.json --glossary skills/translate-rfq/assets/es-zh-demo.json
+# 补齐 translations.json 中空白的译文，再执行：
+python skills/translate-rfq/scripts/translate_xlsx.py apply out/demo-rfq.xlsx out/translations.json out/rfq-translated.xlsx
 ```
 
-The sample goods total is **USD 142.04**. A unit price of `11.375` is displayed as `11.38`; its quantity-8 line is `91.04`. Customs documents contain a goods subtotal without freight or a combined total. Packing lists have no prices and leave missing measurements blank. Customs output is a goods-value template, not a country-specific declaration form.
+词表示例会翻译五处文字，还有三个英文标签需要自行补齐。空译文保留原文字，并在结果中报告，不能据此声称整份已翻完。
 
-<details>
-<summary>See the generated invoice (fictional data)</summary>
+![虚构数据生成的商业发票](docs/invoice-preview.png)
 
-![Example commercial invoice](docs/invoice-preview.png)
-
-</details>
-
-### Cartons + supplied rate → freight estimate
+## 询报价、表格修改与费用比较
 
 ```bash
-python skills/freight-estimator/scripts/estimate_freight.py examples/freight.json
-python skills/freight-estimator/scripts/estimate_freight.py examples/freight-sea.json
+# 图片嵌入对应商品行，供应商报价栏留空
+python skills/supplier-rfq/scripts/build_supplier_rfq.py examples/supplier-rfq.json --output out/supplier-rfq.xlsx
+
+# 多车型报价：不同品质分别一行，零数量表示未选择；演示合计 155 美元
+python skills/multi-quote/scripts/build_quote.py examples/multi-quote.json --output out/multi-quote.xlsx
+python skills/quote-audit/scripts/audit_quote.py out/multi-quote.xlsx examples/quote-layout.json
+
+# 修改已有数量：4 改为 6，原文件保持不变
+python skills/xlsx-edit/scripts/edit_xlsx.py inspect out/multi-quote.xlsx --cell Compact E6
+python examples/make_demo_edit.py out/multi-quote.xlsx --output out/edit-patch.json
+python skills/xlsx-edit/scripts/edit_xlsx.py apply out/multi-quote.xlsx out/edit-patch.json --output out/quote-edited.xlsx
+
+# 门到门费用：虚构演示比较 145 美元和 154 美元
+python skills/landed-cost/scripts/compare_costs.py examples/landed-cost.json
 ```
 
-Two 40 × 30 × 20 cm cartons at 6.1 kg each, with a divisor of 5000 and a per-carton 0.5 kg rounding step, bill at **13 kg**. At a fictional USD 4.50/kg plus 10% and USD 5 flat, the estimate is **USD 69.35**. Real rate cards differ; supply the carrier's divisor, minima and surcharges explicitly. A missing rate fails instead of returning a zero quote.
+![虚构参考图生成的供应商询价单](docs/supplier-rfq-preview.png)
+![多车型报价单中的独立品质选择](docs/multi-quote-preview.png)
 
-#### When packing is not confirmed yet
+报价检查按明确的行、列和汇总范围核算；表格变动时要同步检查范围。它会提示隐藏内容、常见内部价格词、未完成文字和价格变动，但不能保证识别所有私人资料，也不能代替适配和价格协议确认。
+
+局部修改会保留公式表达式，同时清空所有工作表的旧公式结果，并要求重新计算。**先用表格软件打开、重算和保存，再使用新合计。** 不允许修改公式格，不重建整张表，不覆盖原文件。
+
+门到门比较只在全部方案费用齐全时选最低价。明确不适用的费用填零；未知填空或不填，结果会要求补资料。确认相同商品、数量、品质、目的地和税费口径，打包费用只算一次。
+
+网站访客检查和通用 Agent 自验模板单独放在 [Agent 交接与验收工具库](https://github.com/fzy476598462-afk/agent-handoff-review-verify)。
+
+## 使用边界
+
+### 运费估算先看车型与零件
+
+SUV、轿车、MPV、皮卡等是车身类型；紧凑、中等、大型等是另一项尺寸分组。工具可根据你提供的车长、车宽分组，车高保留作背景信息。分组阈值是明示的内部参考规则，不是官方车型级别，也不是包裹尺寸。
+
+包装数据优先于车型推测。同 OE 的唯一记录可直接作为估算参考；同车型、同平台或同车身类型及尺寸的大件记录，需要明确选择。相似尺寸只用于保险杠、机盖、车门、翼子板、风挡、长饰条等，传感器之类小件不会因为车更大就自动放大。
 
 ```bash
 python skills/freight-estimator/scripts/prepare_shipment.py examples/vehicle-shipment.json --output out/prepared-shipment.json
 python skills/freight-estimator/scripts/estimate_freight.py out/prepared-shipment.json
 ```
 
-Vehicle **body type** and **size class** are separate. Supplied overall dimensions group reference records into explicit operational bins; they never become carton dimensions. The tool prioritizes actual packing and exact-OE records, then ranks same-model/platform and similar body/size records for large parts. Similar references require explicit selection, remain estimates, and preserve the stated source. A larger SUV does not automatically increase a small sensor's size. If packing is missing or ambiguous, no shipment file is written. No model specification or packing record is invented.
+重复使用包装记录会标为“本次估算”，不会变成“本次实测”。缺少记录或无法确定用哪条时，工具不输出可计费输入，不忽略缺失商品。不猜车型参数，不自动合箱、折叠或套叠。演示车型和包装记录都是虚构数据。
 
-### RFQ → translated copy
+### 文件与计算
 
-```bash
-python examples/make_demo_rfq.py out/demo-rfq.xlsx
-python skills/translate-rfq/scripts/translate_xlsx.py extract out/demo-rfq.xlsx out/translations.json --glossary skills/translate-rfq/assets/es-zh-demo.json
-# Fill empty translation values in out/translations.json.
-python skills/translate-rfq/scripts/translate_xlsx.py apply out/demo-rfq.xlsx out/translations.json out/rfq-translated.xlsx
-```
+- 发票按显示的两位小数单价计算，逐行四舍五入后相加。高精度单价合同需要另选工作流。拒绝内部成本等未支持字段；不会猜报关编码或申报值。
+- 运费必须提供费率、来源和货代计费规则。缺少费率会报错。尺寸超限只提示，不代表承运许可或已经计算超长费。
+- 询价单翻译只改文字所在的文件部分；其他部分逐个核对内容一致。原文件不修改，译文不能套到另一个或已变更的原表。
+- 保留图片不等于翻译图片文字。批注、图表文字、公式结果不翻译；富文本按文字片段处理，需检查完整语义。
+- 仅支持 XLSX。加密、签名、重复压缩成员及解压后超过 512 MiB 的文件会拒绝处理。输出磁盘需支持硬链接。
+- 不发送客户消息，不订舱，不提交申报，不承诺适配、时效或最终费用。交付前检查实际表格。
 
-The demo includes multiple sheets, shared/inline strings, a rich-text run, formulas and a tiny synthetic image. The glossary fills five text nodes; **three labels remain unfilled** unless you translate them. Empty values keep the original text. The map is bound to the source file's SHA-256. Existing outputs are never overwritten. Images, styles, relationships and other untouched archive members are compared byte-for-byte before the output is published.
-
-### Supplier RFQ and multi-model quote → XLSX
-
-```bash
-python skills/supplier-rfq/scripts/build_supplier_rfq.py examples/supplier-rfq.json --output out/supplier-rfq.xlsx
-python skills/multi-quote/scripts/build_quote.py examples/multi-quote.json --output out/multi-quote.xlsx
-python skills/quote-audit/scripts/audit_quote.py out/multi-quote.xlsx examples/quote-layout.json
-```
-
-Supplier images are embedded on the item row and re-encoded without original EXIF/GPS metadata; visible private text in a photo still needs review. Quote quality options are separate rows, each with its own editable quantity. Zero means unselected; positive quantities on two options order both. The fictional sample totals **USD 155.00**. The layout JSON explicitly identifies checked rows and total relationships; adapt it when the workbook changes. Missing formula caches fail rather than being treated as zero. An audit pass does not confirm fitment, pricing agreements or absence of every kind of confidential information.
-
-<details>
-<summary>See the supplier RFQ and model quote (fictional data)</summary>
-
-![Supplier RFQ with embedded reference illustration](docs/supplier-rfq-preview.png)
-![Multi-model quote with separate quality rows](docs/multi-quote-preview.png)
-
-</details>
-
-### Correct a quantity while keeping the workbook package
-
-```bash
-python skills/xlsx-edit/scripts/edit_xlsx.py inspect out/multi-quote.xlsx --cell Compact E6
-python examples/make_demo_edit.py out/multi-quote.xlsx --output out/edit-patch.json
-python skills/xlsx-edit/scripts/edit_xlsx.py apply out/multi-quote.xlsx out/edit-patch.json --output out/quote-edited.xlsx
-```
-
-The patch changes the example quantity from 4 to 6. Source hash and old value must match; existing outputs and formula-cell edits are rejected. Unrelated package members are verified unchanged. All worksheet formula caches are cleared, including distant summary totals, and recalculation is requested. Open, recalculate and save in a spreadsheet application before using the new totals. This is a bounded existing-cell editor, not a structural workbook editor.
-
-### Compare complete door-to-door offers
-
-```bash
-python skills/landed-cost/scripts/compare_costs.py examples/landed-cost.json
-```
-
-The example compares **USD 145.00 vs. 154.00**, including a supplied fictional exchange rate. Every fee category must be explicit. Known excluded charges can be zero; missing/null fees or missing FX block the lowest-cost selection. Compare the same goods, quantity, quality and destination, and count bundled charges once.
-
-For website visitor checks and a general agent verification controller, see the separate [agent-handoff-review-verify tools](https://github.com/fzy476598462-afk/agent-handoff-review-verify).
-
-## Know the limits
-
-- Review every customer-facing file before use. No script sends, books, files declarations or contacts anyone.
-- Freight results are estimates. Live rates, customs duties, taxes, delivery and unspecified extras are not inferred.
-- Rich-text runs are translated individually; review the complete phrase in the original cell. Names without digits need human/agent review even though digit-containing identifiers are protected.
-- RFQ translation handles XLSX cell strings, not image text, comments, chart labels or formula results. Signed/encrypted files, duplicate ZIP members and workbooks over 512 MiB unpacked are rejected. The output filesystem must support hard links.
-- Invoice values are rounded to two decimals using half-up rounding. Choose a different document workflow if your agreement requires higher price precision. Numeric inputs must be zero or within `1e-9` to `1e9`; extremely large calculations may exceed Decimal's supported precision and are rejected.
-
-## Checks and contributions
+## 验证与反馈
 
 ```bash
 python -m pip install ruff Pillow
@@ -146,6 +131,6 @@ ruff check .
 ruff format --check .
 ```
 
-CI runs the regression suite on Windows and Linux. Got a useful trade workflow? [Open an issue](https://github.com/fzy476598462-afk/trade-agent-skills/issues) with a fictional input and expected result. Please remove customer names, addresses, prices, bank details and credentials from examples.
+欢迎用[问题反馈](https://github.com/fzy476598462-afk/trade-agent-skills/issues)提出需求。请用虚构或彻底匿名的输入，别上传客户资料、银行信息或密钥。
 
-[MIT](LICENSE) · [Jordan](https://partstradeai.com/)
+[MIT 开源许可](LICENSE)
