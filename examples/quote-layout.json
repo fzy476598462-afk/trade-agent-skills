@@ -1,0 +1,12 @@
+{
+  "tables": [
+    {"sheet": "Compact", "start_row": 6, "end_row": 7, "id": "A", "quality": "D", "quantity": "E", "unit_price": "F", "amount": "G"},
+    {"sheet": "Large SUV", "start_row": 6, "end_row": 6, "id": "A", "quality": "D", "quantity": "E", "unit_price": "F", "amount": "G"}
+  ],
+  "totals": [
+    {"sheet": "Compact", "cell": "G9", "sources": [["Compact", "G6:G7"]]},
+    {"sheet": "Large SUV", "cell": "G8", "sources": [["Large SUV", "G6:G6"]]},
+    {"sheet": "Summary", "cell": "D8", "sources": [["Summary", "D5:D6"]]},
+    {"sheet": "Summary", "cell": "D10", "sources": [["Summary", "D8:D9"]]}
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "target_currency": "USD",
+  "comparison_scope": {"goods": "Same demo parts and agreed quality", "quantity": 10, "delivery_point": "Example receiving warehouse"},
+  "offers": [
+    {"name": "Offer A", "currency": "USD", "source": "Fictional offer A, all listed fees confirmed", "costs": {"goods": 100, "freight": 20, "insurance": 0, "duty": 5, "tax": 10, "clearance": 3, "delivery": 7, "other": 0}},
+    {"name": "Offer B", "currency": "EUR", "source": "Fictional offer B, same scope", "fx_to_target": 1.1, "fx_source": "Fictional comparison rate: 1 EUR = 1.10 USD", "costs": {"goods": 90, "freight": 25, "insurance": 0, "duty": 5, "tax": 10, "clearance": 3, "delivery": 7, "other": 0}}
+  ]
+}

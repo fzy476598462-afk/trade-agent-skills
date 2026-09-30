@@ -1,0 +1,10 @@
+{
+  "rfq_no": "DEMO-RFQ-001",
+  "date": "2026-01-15",
+  "vehicle": "Demo compact hatchback | model/year to be confirmed",
+  "instructions": "Fill Quote A / Quote B with clearly stated quality and currency. Confirm fitment and lead time. Images are fictional reference illustrations.",
+  "items": [
+    {"description": "传感器 / Sensor", "source_text": "Sensor reference", "part_no": "DEMO-0001", "quantity": 4, "photo": "demo-part.png", "notes": "Confirm connector and dimensions."},
+    {"description": "支架 / Mounting bracket", "source_text": "Bracket reference", "part_no": "DEMO-0002", "quantity": 2, "notes": "Reference drawing required before ordering."}
+  ]
+}

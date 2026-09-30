@@ -1,0 +1,22 @@
+{
+  "quote_no": "DEMO-Q-001",
+  "date": "2026-01-15",
+  "currency": "USD",
+  "seller": "Example Exporter",
+  "buyer": "Example Buyer",
+  "freight": 20,
+  "terms": "Fictional prices. Zero quantity leaves an option unselected. Confirm model/year, quality and packing before ordering.",
+  "vehicles": [
+    {"sheet": "Compact", "model": "Demo compact hatchback", "items": [
+      {"id": "P-001", "description": "Sensor / 传感器", "part_no": "DEMO-0001", "options": [
+        {"quality": "Option A", "quantity": 4, "unit_price": 12.5},
+        {"quality": "Option B", "quantity": 0, "unit_price": 8.25}
+      ], "notes": "Select the agreed option."}
+    ]},
+    {"sheet": "Large SUV", "model": "Demo large SUV", "items": [
+      {"id": "P-002", "description": "Bumper cover / 保险杠外壳", "part_no": "DEMO-0002", "options": [
+        {"quality": "Option A", "quantity": 1, "unit_price": 85}
+      ], "notes": "Packing dimensions require measurement."}
+    ]}
+  ]
+}

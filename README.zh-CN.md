@@ -1,6 +1,6 @@
 # 外贸 Agent Skills
 
-**把重复的表格工作交给工具。** 发票、运费估算、保留图片和格式的询价单翻译。
+**把重复的表格工作交给工具。** 八个工具，覆盖发票、询报价、运费、费用比较和现有表格修改。
 
 [English](README.md) · [Jordan 的个人站](https://partstradeai.com/)
 
@@ -11,10 +11,15 @@
 | [invoice-builder](skills/invoice-builder) | 商业发票、形式发票、货代用货值发票、装箱单 | 已确认的抬头、商品、数量、价格和条款 |
 | [freight-estimator](skills/freight-estimator) | 按车型和零件筛选包装参考，再计算实重、体积重及费用 | 包装数据或有来源的包装记录、货代费率及规则 |
 | [translate-rfq](skills/translate-rfq) | 修改 Excel 里的文字，保留原表图片、公式、样式和其他文件部分 | 原询价单及确认后的译文 |
+| [supplier-rfq](skills/supplier-rfq) | 带图供应商询价单，图片与商品放在同一行 | 已确认的需求和经过检查的参考图片 |
+| [multi-quote](skills/multi-quote) | 多车型、多品质报价单及汇总页 | 对外售价、明确选择的数量和运费 |
+| [quote-audit](skills/quote-audit) | 检查逐行金额、汇总、隐藏内容和内部字段提示 | 实际表格及明确的检查范围 |
+| [xlsx-edit](skills/xlsx-edit) | 在副本中修改已有文字或数量，核对其他文件部分保持一致 | 源文件、原值和目标值 |
+| [landed-cost](skills/landed-cost) | 比较同一交货范围的门到门成本 | 完整费用及有来源的换算率 |
 
 ## 安装
 
-需要 Python 3.10 及以上。发票工具和演示表生成器需要 `openpyxl`，另外两个脚本仅使用 Python 自带功能。
+需要 Python 3.10 及以上。表格生成与报价检查使用 `openpyxl`，图片使用 Pillow；文字翻译、局部修改和成本计算只使用 Python 自带功能。
 
 ```bash
 git clone https://github.com/fzy476598462-afk/trade-agent-skills.git
@@ -62,6 +67,36 @@ python skills/translate-rfq/scripts/translate_xlsx.py apply out/demo-rfq.xlsx ou
 词表示例会翻译五处文字，还有三个英文标签需要自行补齐。空译文保留原文字，并在结果中报告，不能据此声称整份已翻完。
 
 ![虚构数据生成的商业发票](docs/invoice-preview.png)
+
+## 新增五项直接试用
+
+```bash
+# 图片嵌入对应商品行，供应商报价栏留空
+python skills/supplier-rfq/scripts/build_supplier_rfq.py examples/supplier-rfq.json --output out/supplier-rfq.xlsx
+
+# 多车型报价：不同品质分别一行，零数量表示未选择；演示合计 155 美元
+python skills/multi-quote/scripts/build_quote.py examples/multi-quote.json --output out/multi-quote.xlsx
+python skills/quote-audit/scripts/audit_quote.py out/multi-quote.xlsx examples/quote-layout.json
+
+# 修改已有数量：4 改为 6，原文件保持不变
+python skills/xlsx-edit/scripts/edit_xlsx.py inspect out/multi-quote.xlsx --cell Compact E6
+python examples/make_demo_edit.py out/multi-quote.xlsx --output out/edit-patch.json
+python skills/xlsx-edit/scripts/edit_xlsx.py apply out/multi-quote.xlsx out/edit-patch.json --output out/quote-edited.xlsx
+
+# 门到门费用：虚构演示比较 145 美元和 154 美元
+python skills/landed-cost/scripts/compare_costs.py examples/landed-cost.json
+```
+
+![虚构参考图生成的供应商询价单](docs/supplier-rfq-preview.png)
+![多车型报价单中的独立品质选择](docs/multi-quote-preview.png)
+
+报价检查按明确的行、列和汇总范围核算；表格变动时要同步检查范围。它会提示隐藏内容、常见内部价格词、未完成文字和价格变动，但不能保证识别所有私人资料，也不能代替适配和价格协议确认。
+
+局部修改会保留公式表达式，同时清空所有工作表的旧公式结果，并要求重新计算。**先用表格软件打开、重算和保存，再使用新合计。** 不允许修改公式格，不重建整张表，不覆盖原文件。
+
+门到门比较只在全部方案费用齐全时选最低价。明确不适用的费用填零；未知填空或不填，结果会要求补资料。确认相同商品、数量、品质、目的地和税费口径，打包费用只算一次。
+
+网站访客检查和通用 Agent 自验模板单独放在 [agent-handoff-review-verify](https://github.com/fzy476598462-afk/agent-handoff-review-verify)。
 
 ## 使用边界
 

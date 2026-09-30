@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="440" viewBox="0 0 1200 440" role="img" aria-labelledby="title desc">
-<title id="title">Trade Agent Skills</title><desc id="desc">Practical tools for invoices, freight math and RFQ translation.</desc>
+<title id="title">Trade Agent Skills</title><desc id="desc">Eight tools for invoices, quotes, shipping costs and workbook corrections.</desc>
 <rect width="1200" height="440" rx="24" fill="#f5f2eb"/>
 <path d="M875 0h325v440H875z" fill="#e9e5db"/><path d="M910 0v440M980 0v440M1050 0v440M1120 0v440M875 80h325M875 150h325M875 220h325M875 290h325M875 360h325" stroke="#d6d1c6"/>
 <rect x="52" y="44" width="210" height="30" rx="15" fill="#e5ebe3"/>
@@ -7,9 +7,9 @@
 <text x="52" y="153" font-family="Arial, sans-serif" font-size="62" font-weight="700" letter-spacing="-2" fill="#172b36">Trade Agent Skills</text>
 <text x="55" y="201" font-family="Arial, sans-serif" font-size="24" fill="#5a6768">Less spreadsheet busywork.</text>
 <g font-family="Arial, sans-serif"><rect x="52" y="257" width="235" height="120" rx="14" fill="#fff"/><rect x="308" y="257" width="235" height="120" rx="14" fill="#fff"/><rect x="564" y="257" width="270" height="120" rx="14" fill="#fff"/>
-<text x="73" y="288" font-size="13" fill="#0f766e">01 / DOCUMENTS</text><text x="73" y="326" font-size="25" font-weight="700" fill="#172b36">Invoice builder</text><text x="73" y="352" font-size="14" fill="#687574">Four document types.</text>
-<text x="329" y="288" font-size="13" fill="#0f766e">02 / SHIPPING</text><text x="329" y="326" font-size="25" font-weight="700" fill="#172b36">Freight math</text><text x="329" y="352" font-size="14" fill="#687574">Your cartons. Your rates.</text>
-<text x="585" y="288" font-size="13" fill="#0f766e">03 / WORKBOOKS</text><text x="585" y="326" font-size="25" font-weight="700" fill="#172b36">RFQ translation</text><text x="585" y="352" font-size="14" fill="#687574">Keep the pictures and formulas.</text></g>
+<text x="73" y="288" font-size="13" fill="#0f766e">01 / DOCUMENTS</text><text x="73" y="326" font-size="23" font-weight="700" fill="#172b36">Invoices + quotes</text><text x="73" y="352" font-size="14" fill="#687574">Clear options. Checked totals.</text>
+<text x="329" y="288" font-size="13" fill="#0f766e">02 / SHIPPING</text><text x="329" y="326" font-size="23" font-weight="700" fill="#172b36">Freight + costs</text><text x="329" y="352" font-size="14" fill="#687574">Your cartons. Your rates.</text>
+<text x="585" y="288" font-size="13" fill="#0f766e">03 / WORKBOOKS</text><text x="585" y="326" font-size="23" font-weight="700" fill="#172b36">Translate + edit</text><text x="585" y="352" font-size="14" fill="#687574">Keep the pictures and formulas.</text></g>
 <g transform="translate(920 95) rotate(8 100 120)"><rect x="8" y="8" width="216" height="258" rx="14" fill="#d1c9bc"/><rect width="216" height="258" rx="14" fill="#fff"/><rect x="25" y="30" width="110" height="14" rx="4" fill="#172b36"/><rect x="25" y="68" width="166" height="27" rx="4" fill="#0f766e"/><path d="M25 115h166M25 144h166M25 173h166M25 202h166" stroke="#d8e2dc" stroke-width="6"/><circle cx="174" cy="225" r="29" fill="#e78550"/><path d="m160 225 10 10 19-21" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/></g>
 <text x="55" y="414" font-family="Arial, sans-serif" font-size="12" letter-spacing="2" fill="#77817b">OPEN SOURCE / LOCAL FIRST / BY JORDAN</text>
 </svg>

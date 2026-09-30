@@ -6,23 +6,28 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-0F766E" alt="MIT license"></a>
 </p>
 
-<p align="center"><strong>Invoices. Freight math. RFQs with the pictures still there.</strong><br>Practical skills and local scripts for everyday international trade work.</p>
+<p align="center"><strong>Invoices. Quotes. Freight. RFQs with the pictures still there.</strong><br>Eight practical skills and local scripts for everyday international trade work.</p>
 
 <p align="center">English · <a href="README.zh-CN.md">简体中文</a> · <a href="https://partstradeai.com/">Made by Jordan</a></p>
 
-## Three jobs, three skills
+## Eight tools for the trade desk
 
 | Skill | What you get | Important boundary |
 | --- | --- | --- |
 | [invoice-builder](skills/invoice-builder) | Commercial / proforma / customs invoices and packing lists as XLSX | Your confirmed data; no pricing or HS-code inference |
 | [freight-estimator](skills/freight-estimator) | Vehicle/part packing references, actual vs. volumetric weight, kg / CBM estimates | Supply packing evidence, rates and carrier terms |
 | [translate-rfq](skills/translate-rfq) | Shared and inline text translated in a copy of the workbook | You or your agent supply translations; untouched ZIP members remain identical |
+| [supplier-rfq](skills/supplier-rfq) | Supplier RFQs with images beside each item and blank response columns | Confirm part identity and review the actual pictures |
+| [multi-quote](skills/multi-quote) | Multi-model tabs, separate quality options and a linked summary | Explicit quantities select options; no internal pricing defaults |
+| [quote-audit](skills/quote-audit) | Read-only arithmetic, totals, hidden-content and internal-label checks | Explicit layout mapping; saved formula caches required |
+| [xlsx-edit](skills/xlsx-edit) | Hash-bound existing-cell corrections in a copy | Formula expressions retained; caches cleared for recalculation |
+| [landed-cost](skills/landed-cost) | Comparable door-to-door totals in a common currency | Unknown fees block a winner; supply costs and FX |
 
 These are standalone public adaptations of tools used in my own trade workflow. They contain **no customer records, credentials, company defaults or carrier rate database**. All included examples are fictional. Scripts run locally, without an AI API key or a network call; the agent provides judgment and translation.
 
 ## Get started
 
-Requires Python 3.10+. Only the invoice script and the sample-workbook generator need `openpyxl`.
+Requires Python 3.10+. Workbook generation and quote checks use `openpyxl`; reference images use Pillow. Translation, bounded cell edits and cost math use the Python standard library.
 
 ```bash
 git clone https://github.com/fzy476598462-afk/trade-agent-skills.git
@@ -85,6 +90,44 @@ python skills/translate-rfq/scripts/translate_xlsx.py apply out/demo-rfq.xlsx ou
 ```
 
 The demo includes multiple sheets, shared/inline strings, a rich-text run, formulas and a tiny synthetic image. The glossary fills five text nodes; **three labels remain unfilled** unless you translate them. Empty values keep the original text. The map is bound to the source file's SHA-256. Existing outputs are never overwritten. Images, styles, relationships and other untouched archive members are compared byte-for-byte before the output is published.
+
+### Supplier RFQ and multi-model quote → XLSX
+
+```bash
+python skills/supplier-rfq/scripts/build_supplier_rfq.py examples/supplier-rfq.json --output out/supplier-rfq.xlsx
+python skills/multi-quote/scripts/build_quote.py examples/multi-quote.json --output out/multi-quote.xlsx
+python skills/quote-audit/scripts/audit_quote.py out/multi-quote.xlsx examples/quote-layout.json
+```
+
+Supplier images are embedded on the item row and re-encoded without original EXIF/GPS metadata; visible private text in a photo still needs review. Quote quality options are separate rows, each with its own editable quantity. Zero means unselected; positive quantities on two options order both. The fictional sample totals **USD 155.00**. The layout JSON explicitly identifies checked rows and total relationships; adapt it when the workbook changes. Missing formula caches fail rather than being treated as zero. An audit pass does not confirm fitment, pricing agreements or absence of every kind of confidential information.
+
+<details>
+<summary>See the supplier RFQ and model quote (fictional data)</summary>
+
+![Supplier RFQ with embedded reference illustration](docs/supplier-rfq-preview.png)
+![Multi-model quote with separate quality rows](docs/multi-quote-preview.png)
+
+</details>
+
+### Correct a quantity while keeping the workbook package
+
+```bash
+python skills/xlsx-edit/scripts/edit_xlsx.py inspect out/multi-quote.xlsx --cell Compact E6
+python examples/make_demo_edit.py out/multi-quote.xlsx --output out/edit-patch.json
+python skills/xlsx-edit/scripts/edit_xlsx.py apply out/multi-quote.xlsx out/edit-patch.json --output out/quote-edited.xlsx
+```
+
+The patch changes the example quantity from 4 to 6. Source hash and old value must match; existing outputs and formula-cell edits are rejected. Unrelated package members are verified unchanged. All worksheet formula caches are cleared, including distant summary totals, and recalculation is requested. Open, recalculate and save in a spreadsheet application before using the new totals. This is a bounded existing-cell editor, not a structural workbook editor.
+
+### Compare complete door-to-door offers
+
+```bash
+python skills/landed-cost/scripts/compare_costs.py examples/landed-cost.json
+```
+
+The example compares **USD 145.00 vs. 154.00**, including a supplied fictional exchange rate. Every fee category must be explicit. Known excluded charges can be zero; missing/null fees or missing FX block the lowest-cost selection. Compare the same goods, quantity, quality and destination, and count bundled charges once.
+
+For website visitor checks and a general agent verification controller, see the separate [agent-handoff-review-verify tools](https://github.com/fzy476598462-afk/agent-handoff-review-verify).
 
 ## Know the limits
 
